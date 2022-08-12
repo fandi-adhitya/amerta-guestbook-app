@@ -9,6 +9,7 @@ import {
 import { BLUE_COLOR, GREY_COLOR, WHITE_COLOR } from "../../constants/color";
 import AppIntroSlider from 'react-native-app-intro-slider';
 import IntroSlider from "../../components/IntroSlider";
+import { LIGHT, REGULAR } from "../../constants/fonts";
 
 
 const Header: React.FC = () => {
@@ -27,10 +28,7 @@ const Header: React.FC = () => {
 const Footer: React.FC = () => {
   return (
     <View style={styles.footer}>
-      <Text style={{
-        fontSize: 11,
-        color: GREY_COLOR
-      }}>
+      <Text style={styles.footerText}>
         Siap, untuk mendata tamu undangan !
       </Text>
       <Pressable style={styles.footerButton} onPress={() => { console.log('tes') }}>
@@ -73,22 +71,31 @@ const styles = StyleSheet.create({
     margin: 4,
   },
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    // flexDirection: 'row',
+    // justifyContent: 'space-between',
     alignItems: "center"
   },
+  footerText : {
+    fontFamily : LIGHT,
+    fontSize : 12,
+    marginBottom : 12
+  },
   footerButton: {
-    width: 100,
-    height: 27,
-    paddingVertical: 5,
-    paddingHorizontal: 27,
+    width: "100%",
+    height: 40,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
     backgroundColor: BLUE_COLOR,
     borderRadius: 11,
     marginLeft: 10
   },
   footerButtonText: {
-    fontSize: 14,
+    fontSize: 18,
     color: WHITE_COLOR,
+    fontFamily : REGULAR,
+    textAlign: 'center',
+    alignSelf : 'center'
+    // alignItems : 'center'
   }
 })
 

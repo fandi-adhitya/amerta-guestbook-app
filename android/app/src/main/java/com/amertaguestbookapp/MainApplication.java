@@ -14,7 +14,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.facebook.react.shell.MainReactPackage;
- import java.util.Arrays;
+import java.util.Arrays;
+import com.horcrux.svg.SvgPackage;
 
 
 public class MainApplication extends Application implements ReactApplication {
@@ -33,7 +34,7 @@ public class MainApplication extends Application implements ReactApplication {
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
           // return packages;
-          return Arrays.<ReactPackage>asList(new MainReactPackage(),new SplashScreenReactPackage());
+          return Arrays.<ReactPackage>asList(new MainReactPackage(),new SplashScreenReactPackage(), new SvgPackage());
         }
 
         @Override

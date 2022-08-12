@@ -37,6 +37,26 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>fonts/Montserrat-BlackItalic.otf</string>
+		<string>fonts/Montserrat-Bold.otf</string>
+		<string>fonts/Montserrat-BoldItalic.otf</string>
+		<string>fonts/Montserrat-ExtraBold.otf</string>
+		<string>fonts/Montserrat-ExtraBoldItalic.otf</string>
+		<string>fonts/Montserrat-ExtraLight.otf</string>
+		<string>fonts/Montserrat-ExtraLightItalic.otf</string>
+		<string>fonts/Montserrat-Italic.otf</string>
+		<string>fonts/Montserrat-Light.otf</string>
+		<string>fonts/Montserrat-LightItalic.otf</string>
+		<string>fonts/Montserrat-Medium.otf</string>
+		<string>fonts/Montserrat-MediumItalic.otf</string>
+		<string>fonts/Montserrat-Regular.otf</string>
+		<string>fonts/Montserrat-SemiBold.otf</string>
+		<string>fonts/Montserrat-SemiBoldItalic.otf</string>
+		<string>fonts/Montserrat-Thin.otf</string>
+		<string>fonts/Montserrat-ThinItalic.otf</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
