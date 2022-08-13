@@ -1,11 +1,7 @@
 import React from "react";
 import {
   Dimensions,
-  Image,
-  PixelRatio,
-  SafeAreaView,
   ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
   View
@@ -33,8 +29,6 @@ const IntroSlider = () => {
 
   return (
     <>
-      {/* <StatusBar barStyle="dark-content" /> */}
-      {/* <SafeAreaView style={{ flex: 1 }}> */}
       <ScrollView
         style={{ flex: 1 }}
         horizontal={true}

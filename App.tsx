@@ -1,86 +1,58 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
-
-import React, {type PropsWithChildren} from 'react';
+import React, { type PropsWithChildren } from 'react';
 import {
   SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
-  Text,
-  useColorScheme,
-  View,
 } from 'react-native';
-
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SplashScreen from 'react-native-splash-screen';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 import Authentication from './src/screens/authentication';
 import Welcome from './src/screens/welcome';
+import Home from './src/screens/home';
 
-const Section: React.FC<
-  PropsWithChildren<{
-    title: string;
-  }>
-> = ({children, title}) => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
+const Stack = createNativeStackNavigator()
 
 const App = () => {
-  const isDarkMode = useColorScheme() === 'dark';
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  React.useEffect( () => {
+  React.useEffect(() => {
     SplashScreen.hide()
-  },[] )
+  }, [])
 
   return (
-    <SafeAreaView 
-    style={{
-        flex: 1,
-        backgroundColor: '#FFF',
-    }}
->
-        <Welcome />
-      {/* <Authentication /> */}
+    <SafeAreaView style={{
+      flex: 1,
+      backgroundColor: '#FFF',
+    }}>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Welcome"
+            component={Welcome}
+            options={{
+              headerShown: false,
+            }}
+          />
+
+          <Stack.Screen
+            name="Authentication"
+            component={Authentication}
+            options={{
+              headerShown: false
+            }}
+          />
+
+          <Stack.Screen
+            name="Home"
+            component={Home}
+            options={{
+              headerShown: false,
+              headerLeft : () => null
+              // gestureEnabled: false,
+            }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
     </SafeAreaView>
   );
 };

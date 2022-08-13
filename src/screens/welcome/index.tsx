@@ -4,12 +4,15 @@ import {
   Image,
   StyleSheet,
   Text,
-  Pressable
+  Pressable,
+  TouchableOpacity,
+  GestureResponderEvent
 } from "react-native";
 import { BLUE_COLOR, GREY_COLOR, WHITE_COLOR } from "../../constants/color";
 import AppIntroSlider from 'react-native-app-intro-slider';
 import IntroSlider from "../../components/IntroSlider";
 import { LIGHT, REGULAR } from "../../constants/fonts";
+import { useNavigation } from "@react-navigation/native";
 
 
 const Header: React.FC = () => {
@@ -24,37 +27,54 @@ const Header: React.FC = () => {
   )
 }
 
+type FooterType = {
+  onPress : ((event: GestureResponderEvent) => void)
+}
 
-const Footer: React.FC = () => {
+const Footer: React.FC<FooterType> = ({
+  onPress
+} : FooterType ) => {
   return (
     <View style={styles.footer}>
       <Text style={styles.footerText}>
         Siap, untuk mendata tamu undangan !
       </Text>
-      <Pressable style={styles.footerButton} onPress={() => { console.log('tes') }}>
-        <Text style={styles.footerButtonText}> Masuk </Text>
-      </Pressable>
+      <TouchableOpacity
+        style={styles.footerButton}
+        onPress={onPress}
+      >
+        <Text style={styles.footerButtonText}>
+          Masuk
+        </Text>
+      </TouchableOpacity>
     </View>
   )
 }
 
 const Welcome: React.FC = () => {
+
+  const navigation = useNavigation()
+
+  const toAuthentication = () => {
+    navigation.navigate('Authentication' as never, {} as never);
+  }
+
   return (
     <>
       <View style={styles.container}>
-        
+
         <View style={styles.content}>
           <Header />
         </View>
-        
+
         {/* <View> */}
-          <IntroSlider/>
+        <IntroSlider />
         {/* </View> */}
 
         <View style={styles.content}>
-          <Footer />
+          <Footer onPress={toAuthentication}/>
         </View>
-    
+
       </View>
     </>
   )
@@ -64,7 +84,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: "space-between"
+    justifyContent: "space-between",
+    backgroundColor: "#fff"
   },
   content: {
     padding: 20,
@@ -75,10 +96,10 @@ const styles = StyleSheet.create({
     // justifyContent: 'space-between',
     alignItems: "center"
   },
-  footerText : {
-    fontFamily : LIGHT,
-    fontSize : 12,
-    marginBottom : 12
+  footerText: {
+    fontFamily: LIGHT,
+    fontSize: 12,
+    marginBottom: 12
   },
   footerButton: {
     width: "100%",
@@ -92,9 +113,9 @@ const styles = StyleSheet.create({
   footerButtonText: {
     fontSize: 18,
     color: WHITE_COLOR,
-    fontFamily : REGULAR,
+    fontFamily: REGULAR,
     textAlign: 'center',
-    alignSelf : 'center'
+    alignSelf: 'center'
     // alignItems : 'center'
   }
 })

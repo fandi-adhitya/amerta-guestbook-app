@@ -16,7 +16,8 @@ import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import java.util.Arrays;
 import com.horcrux.svg.SvgPackage;
-
+import com.swmansion.rnscreens.RNScreensPackage;
+import com.th3rdwave.safeareacontext.SafeAreaContextPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -34,7 +35,14 @@ public class MainApplication extends Application implements ReactApplication {
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
           // return packages;
-          return Arrays.<ReactPackage>asList(new MainReactPackage(),new SplashScreenReactPackage(), new SvgPackage());
+          return Arrays.<ReactPackage>asList(
+            new MainReactPackage(),
+            new SplashScreenReactPackage(), 
+            new SvgPackage(),
+            new RNScreensPackage(),
+            new SafeAreaContextPackage()
+
+          );
         }
 
         @Override

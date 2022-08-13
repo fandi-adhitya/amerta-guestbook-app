@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import {
   Image,
@@ -11,6 +12,8 @@ import { BLACK_COLOR, BLUE_COLOR, GREY_1_COLOR, WHITE_COLOR } from "../../consta
 import { MEDIUM, REGULAR, SEMI_BOLD } from "../../constants/fonts";
 
 const Form: React.FC = () => {
+  const navigation = useNavigation()
+
   return (
     <View style={styles.formContainer}>
       <View style={styles.formHeader}>
@@ -48,6 +51,9 @@ const Form: React.FC = () => {
         />
         <TouchableOpacity
           style={styles.formButton}
+          onPress={() => {
+            navigation.navigate("Home" as never, {} as never)
+          }}
         >
           <Text style={styles.formButtonText}>
             Masuk
@@ -143,9 +149,9 @@ const styles = StyleSheet.create({
   },
   formButton: {
     backgroundColor : BLUE_COLOR,
-    height : 70,
+    height : 40,
     borderRadius : 15,
-    paddingVertical : 23
+    paddingVertical : 8
   },
   formButtonText : {
     textAlign : "center",
