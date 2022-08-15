@@ -10,6 +10,7 @@ import SplashScreen from 'react-native-splash-screen';
 import Authentication from './src/screens/authentication';
 import Welcome from './src/screens/welcome';
 import Home from './src/screens/home';
+import Scanner from './src/screens/scan';
 
 const Stack = createNativeStackNavigator()
 
@@ -47,8 +48,14 @@ const App = () => {
             component={Home}
             options={{
               headerShown: false,
-              headerLeft : () => null
-              // gestureEnabled: false,
+            }}
+          />
+
+          <Stack.Screen
+            name="Scan"
+            component={Scanner}
+            options={{
+              headerShown: false,
             }}
           />
         </Stack.Navigator>

@@ -18,6 +18,7 @@ import java.util.Arrays;
 import com.horcrux.svg.SvgPackage;
 import com.swmansion.rnscreens.RNScreensPackage;
 import com.th3rdwave.safeareacontext.SafeAreaContextPackage;
+import org.reactnative.camera.RNCameraPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -40,8 +41,8 @@ public class MainApplication extends Application implements ReactApplication {
             new SplashScreenReactPackage(), 
             new SvgPackage(),
             new RNScreensPackage(),
-            new SafeAreaContextPackage()
-
+            new SafeAreaContextPackage(),
+            new RNCameraPackage()
           );
         }
 

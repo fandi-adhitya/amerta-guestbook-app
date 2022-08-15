@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import {
   View,
@@ -12,6 +13,7 @@ import {
 } from "react-native";
 import { BLUE_COLOR, GREY_1_COLOR, PURPLE_COLOR, WHITE_COLOR, YELLOW_COLOR } from "../../constants/color";
 import { MEDIUM, REGULAR, SEMI_BOLD } from "../../constants/fonts";
+import { VISITOR } from "../../constants/visitor_mocks";
 
 const Header: React.FC = () => {
   return (
@@ -44,6 +46,12 @@ const Header: React.FC = () => {
 const windowWidth = Dimensions.get('window').width;
 
 const Dashboard: React.FC = () => {
+  const navigation = useNavigation()
+
+  const goToScan = () => {
+    navigation.navigate("Scan" as never, {} as never)
+  }
+
   return (
     <View style={styles.dashboardContainer}>
       <View style={styles.dashboardContainerCountVisitor}>
@@ -84,7 +92,7 @@ const Dashboard: React.FC = () => {
           <Text style={styles.dashboardContainerMenuItemsText}>Manual</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.dashboardContainerMenuContainerItems}>
+        <TouchableOpacity style={styles.dashboardContainerMenuContainerItems} onPress={goToScan}>
           <View
             style={styles.dashboardContainerMenuItems}
           >
@@ -101,75 +109,176 @@ const Dashboard: React.FC = () => {
 
 const Menu: React.FC = () => {
   return (
-    <View style={menuStyles.menuContainer}>
-      <View style={menuStyles.menuItems}>
+    <>
+      <View style={menuStyles.menuContainer}>
+        <View style={menuStyles.menuItems}>
+          <Image
+            style={menuStyles.menuItemsImage}
+            source={require('../../assets/illustrations/ill_daftar_tamu.png')} />
+          <TouchableOpacity>
+            <View style={menuStyles.menuItemsContentContainer}>
+              <View style={menuStyles.menuItemsTextContainer}>
+                <Text style={{
+                  fontFamily: SEMI_BOLD,
+                  color: PURPLE_COLOR,
+                  fontSize: 12
+                }}>
+                  Daftar Tamu
+                </Text>
+                <Text style={{
+                  fontFamily: REGULAR,
+                  color: GREY_1_COLOR,
+                  fontSize: 8
+                }}>
+                  Lihat Daftar Tamu
+                </Text>
+              </View>
+              <View style={menuStyles.menuItemsButton}>
+                <Image
+                  style={{
+                    width: 9,
+                    height: 9
+                  }}
+                  source={require('../../assets/icons/ic_arrow.png')}
+                />
+              </View>
+            </View>
+          </TouchableOpacity>
+        </View>
+        <View style={menuStyles.menuItems}>
+          <Image
+            style={menuStyles.menuItemsImage}
+            source={require('../../assets/illustrations/ill_undangan.png')} />
+          <TouchableOpacity>
+            <View style={menuStyles.menuItemsContentContainer}>
+              <View style={menuStyles.menuItemsTextContainer}>
+                <Text style={{
+                  fontFamily: SEMI_BOLD,
+                  color: YELLOW_COLOR,
+                  fontSize: 12
+                }}>
+                  Undangan
+                </Text>
+                <Text style={{
+                  fontFamily: REGULAR,
+                  color: GREY_1_COLOR,
+                  fontSize: 8
+                }}>
+                  Lihat Undangan Saya
+                </Text>
+              </View>
+              <View style={menuStyles.menuItemsButtonSecondary}>
+                <Image
+                  style={{
+                    width: 9,
+                    height: 9
+                  }}
+                  source={require('../../assets/icons/ic_arrow.png')}
+                />
+              </View>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View style={menuStyles.menuItemsBottomContainer}>
         <Image
-          style={menuStyles.menuItemsImage}
-          source={require('../../assets/illustrations/ill_daftar_tamu.png')} />
+          style={{
+            width: 100,
+            height: 80,
+          }}
+          source={require('../../assets/illustrations/ill_help.png')} />
+        <TouchableOpacity style={menuStyles.menuItemsBottomText}>
+          <Text style={{
+            color: BLUE_COLOR,
+            fontFamily: MEDIUM,
+            fontSize: 14,
+            marginBottom: 8,
+          }}>
+            Panduan Penggunaan
+          </Text>
+          <Text style={{
+            color: GREY_1_COLOR,
+            fontFamily: REGULAR,
+            fontSize: 8,
+          }}>
+            Lihat tutorial cara penggunaan aplikasi {"\n"}guestbook disini
+          </Text>
+        </TouchableOpacity>
         <TouchableOpacity>
-          <View style={menuStyles.menuItemsContentContainer}>
-            <View style={menuStyles.menuItemsTextContainer}>
-              <Text style={{
-                fontFamily: SEMI_BOLD,
-                color: PURPLE_COLOR,
-                fontSize: 12
-              }}>
-                Daftar Tamu
-              </Text>
-              <Text style={{
-                fontFamily: REGULAR,
-                color: GREY_1_COLOR,
-                fontSize: 8
-              }}>
-                Lihat Daftar Tamu
-              </Text>
-            </View>
-            <View style={menuStyles.menuItemsButton}>
-              <Image
-                style={{
-                  width: 9,
-                  height: 9
-                }}
-                source={require('../../assets/icons/ic_arrow.png')}
-              />
-            </View>
+          <View style={menuStyles.menuItemsBottomButton}>
+            <Image
+              style={{
+                width: 9,
+                height: 9
+              }}
+              source={require('../../assets/icons/ic_arrow.png')}
+            />
           </View>
         </TouchableOpacity>
       </View>
-      <View style={menuStyles.menuItems}>
-        <Image
-          style={menuStyles.menuItemsImage}
-          source={require('../../assets/illustrations/ill_undangan.png')} />
+    </>
+  )
+}
+
+const ListVisitorCard : React.FC<{
+  name : string,
+  address : string
+}> = ({
+  name,
+  address
+}) => {
+  return (
+    <View style={visitorStyles.container}>
+      <View 
+        style={{
+          height : 53,
+          width: 7,
+          borderRadius : 10,
+          backgroundColor : BLUE_COLOR,
+          marginRight : 11,
+        }}
+      />
+      <View>
+        <Text style={{
+          fontFamily : SEMI_BOLD,
+          fontSize : 18
+        }}>
+          {name}
+        </Text>
+        <Text style={{
+          fontFamily : REGULAR,
+          fontSize : 14
+        }}>
+          {address}
+        </Text>
+      </View>
+    </View>
+  )
+}
+
+const ListVisitor : React.FC = () => {
+  return (
+    <View style={listStyles.container}>
+      <View style={listStyles.titleContainer}>
+        <Text style={listStyles.titleText}>
+          Tamu Hadir
+        </Text>
         <TouchableOpacity>
-          <View style={menuStyles.menuItemsContentContainer}>
-            <View style={menuStyles.menuItemsTextContainer}>
-              <Text style={{
-                fontFamily: SEMI_BOLD,
-                color: YELLOW_COLOR,
-                fontSize: 12
-              }}>
-                Undangan
-              </Text>
-              <Text style={{
-                fontFamily: REGULAR,
-                color: GREY_1_COLOR,
-                fontSize: 8
-              }}>
-                Lihat Undangan Saya
-              </Text>
-            </View>
-            <View style={menuStyles.menuItemsButtonSecondary}>
-              <Image
-                style={{
-                  width: 9,
-                  height: 9
-                }}
-                source={require('../../assets/icons/ic_arrow.png')}
-              />
-            </View>
-          </View>
+          <Text style={listStyles.titleButton}>
+            Lihat lebih banyak
+          </Text>
         </TouchableOpacity>
       </View>
+
+      {
+        VISITOR.map((v, i) => (
+          <ListVisitorCard
+            key={v.name} 
+            name={v.name}
+            address={v.address}
+          />
+        ))
+      }
     </View>
   )
 }
@@ -188,7 +297,7 @@ const Home: React.FC = () => {
   };
 
   React.useEffect(() => {
-    BackHandler.addEventListener("hardwareBackPress", backAction);
+    // BackHandler.addEventListener("hardwareBackPress", backAction);
     return () => {
       BackHandler.removeEventListener("hardwareBackPress", backAction);
     }
@@ -199,6 +308,7 @@ const Home: React.FC = () => {
       <Header />
       <Dashboard />
       <Menu />
+      <ListVisitor /> 
     </ScrollView>
   )
 }
@@ -256,11 +366,11 @@ const styles = StyleSheet.create({
   dashboardContainer: {
     position: 'absolute',
     top: 166,
-    width: 370,
+    width: 350,
     height: 142,
     backgroundColor: WHITE_COLOR,
     borderRadius: 20,
-    marginHorizontal: (windowWidth - 370) / 2,
+    marginHorizontal: (windowWidth - 350) / 2,
     paddingHorizontal: 28,
     paddingVertical: 16,
   },
@@ -302,13 +412,12 @@ const styles = StyleSheet.create({
   }
 })
 
-
 const menuStyles = StyleSheet.create({
   menuContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 100,
-    marginHorizontal: (windowWidth - 370) / 2,
+    marginTop: 90,
+    marginHorizontal: (windowWidth - 350) / 2,
 
   },
   menuItems: {
@@ -347,7 +456,59 @@ const menuStyles = StyleSheet.create({
     backgroundColor: YELLOW_COLOR,
     alignItems: 'center',
     paddingTop: 3
+  },
+  menuItemsBottomContainer: {
+    marginVertical: 11,
+    backgroundColor: WHITE_COLOR,
+    marginHorizontal: (windowWidth - 350) / 2,
+    borderRadius: 20,
+    padding: 12,
+    flexDirection: "row",
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  menuItemsBottomText: {
+    flexDirection: 'column',
+  },
+  menuItemsBottomButton: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: BLUE_COLOR,
+    alignItems: 'center',
+    paddingTop: 3
+  },
+})
+
+const listStyles = StyleSheet.create({
+  container : {
+    marginHorizontal: (windowWidth - 350) / 2,
+    marginVertical : 11,
+  },
+  titleContainer: {
+    flexDirection : 'row',
+    justifyContent : 'space-between',
+    alignItems: 'center'
+  },
+  titleText : {
+    fontFamily : SEMI_BOLD,
+    fontSize: 14
+  },
+  titleButton : {
+    fontFamily : REGULAR,
+    fontSize: 10
   }
 })
 
+
+const visitorStyles = StyleSheet.create({
+  container : {
+    backgroundColor : "#fff",
+    borderRadius : 10,
+    padding : 11,
+    marginVertical : 11,
+    flexDirection: "row",
+    alignItems : 'center'
+  }
+})
 export default Home
