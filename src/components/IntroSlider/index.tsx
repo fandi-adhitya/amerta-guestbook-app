@@ -7,6 +7,7 @@ import {
   View
 } from "react-native";
 import Svg, { Circle, Path,  } from 'react-native-svg';
+import { LIGHT, MEDIUM, REGULAR, SEMI_BOLD } from "../../constants/fonts";
 import { FirstIllustration, SecondIllustration, ThirdIllustration } from "../Illustration";
 
 const IntroSlider = () => {
@@ -16,7 +17,7 @@ const IntroSlider = () => {
   const setSliderPage = (event: any) => {
     const { currentPage } = sliderState;
     const { x } = event.nativeEvent.contentOffset;
-    const indexOfNextScreen = Math.floor(x / width);
+    const indexOfNextScreen = Math.round(x / width);
     if (indexOfNextScreen !== currentPage) {
       setSliderState({
         ...sliderState,
@@ -81,16 +82,15 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 28,
-    fontWeight: 'bold',
     marginLeft: 27,
     marginBottom: 8,
     textAlign: 'left',
-    fontFamily: "Montserrat-Medium"
+    fontFamily : SEMI_BOLD
   },
   paragraph: {
     marginLeft: 27,
     fontSize: 18,
-    fontFamily: "Montserrat-Light"
+    fontFamily : REGULAR
   },
   paginationWrapper: {
     position: 'absolute',
