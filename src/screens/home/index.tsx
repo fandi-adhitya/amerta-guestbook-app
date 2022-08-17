@@ -9,11 +9,16 @@ import {
   Dimensions,
   TouchableOpacity,
   BackHandler,
-  Alert
+  Alert,
+  ScreenRect,
+  TextInput
 } from "react-native";
-import { BLUE_COLOR, GREY_1_COLOR, PURPLE_COLOR, WHITE_COLOR, YELLOW_COLOR } from "../../constants/color";
-import { MEDIUM, REGULAR, SEMI_BOLD } from "../../constants/fonts";
-import { VISITOR } from "../../constants/visitor_mocks";
+import { BLUE_COLOR, GREY_1_COLOR, GREY_COLOR, PURPLE_COLOR, WHITE_COLOR, YELLOW_COLOR } from "../../constants/color";
+import { BOLD, MEDIUM, REGULAR, SEMI_BOLD } from "../../constants/fonts";
+import { VISITOR, VISITOR_ } from "../../constants/visitor_mocks";
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
+import { BottomSheet, Button, Dialog, ListItem } from "@rneui/themed";
 
 const Header: React.FC = () => {
   return (
@@ -52,62 +57,259 @@ const Dashboard: React.FC = () => {
     navigation.navigate("Scan" as never, {} as never)
   }
 
+  const [isVisibleMasterData, setIsVisibleMasterData] = React.useState(false)
+  const [isVisibleVisitor, setIsVisibleVisitor] = React.useState(false)
+  const [isOpenDialogSuccess, setIsOpenDialogSuccess] = React.useState(false)
+
+  const goToVisitor = () => {
+    setIsVisibleMasterData(!isVisibleMasterData)
+    navigation.navigate('Visitor' as never, {} as never)
+  }
+
   return (
-    <View style={styles.dashboardContainer}>
-      <View style={styles.dashboardContainerCountVisitor}>
-        <Text style={styles.dashboardContainerCountVisitorText}>
-          Tamu Hadir
-        </Text>
-        <Text style={styles.dashboardContainerCountVisitorNumber}>
-          100
-        </Text>
-      </View>
-      <View
-        style={{
-          marginVertical: 10,
-          borderBottomColor: GREY_1_COLOR,
-          borderBottomWidth: StyleSheet.hairlineWidth,
+    <>
+      <Dialog
+        overlayStyle={{
+          backgroundColor: '#EFF0F5',
+          borderRadius: 20,
         }}
-      />
-      <View style={styles.dashboardContainerMenus}>
-        <TouchableOpacity style={styles.dashboardContainerMenuContainerItems}>
-          <View
-            style={styles.dashboardContainerMenuItems}
-          >
-            <Image
-              style={styles.dashboardContainerMenuIcons}
-              source={require('../../assets/icons/ic_master.png')} />
-          </View>
-          <Text style={styles.dashboardContainerMenuItemsText}>Master Data</Text>
-        </TouchableOpacity>
+        isVisible={isOpenDialogSuccess}
+        onBackdropPress={() => { setIsOpenDialogSuccess(!isOpenDialogSuccess) }}
+      >
+        <Text style={{
+          fontFamily: BOLD,
+          textAlign: 'center',
+          fontSize: 14
+        }}>
+          Sukses
+        </Text>
 
-        <TouchableOpacity style={styles.dashboardContainerMenuContainerItems}>
-          <View
-            style={styles.dashboardContainerMenuItems}
-          >
-            <Image
-              style={styles.dashboardContainerMenuIcons}
-              source={require('../../assets/icons/ic_manual.png')} />
-          </View>
-          <Text style={styles.dashboardContainerMenuItemsText}>Manual</Text>
+        <Text style={{
+          fontFamily: REGULAR,
+          textAlign: 'center',
+          fontSize: 10,
+          marginVertical: 16
+        }}>
+          Tamu berhasil ditambah
+        </Text>
+        <View
+          style={{
+            marginBottom: 16,
+            borderBottomColor: GREY_COLOR,
+            borderBottomWidth: StyleSheet.hairlineWidth,
+          }}
+        />
+        <TouchableOpacity onPress={() => { setIsOpenDialogSuccess(!isOpenDialogSuccess) }}>
+          <Text style={{
+            textAlign : 'center',
+            fontFamily : REGULAR,
+            fontSize : 12,
+            color : BLUE_COLOR,
+          }}>
+            Tutup
+          </Text>
         </TouchableOpacity>
+      </Dialog>
 
-        <TouchableOpacity style={styles.dashboardContainerMenuContainerItems} onPress={goToScan}>
-          <View
-            style={styles.dashboardContainerMenuItems}
-          >
-            <Image
-              style={styles.dashboardContainerMenuIcons}
-              source={require('../../assets/icons/ic_scan.png')} />
+      {/* Master Data Bottom Sheet */}
+      <BottomSheet
+        onBackdropPress={() => {
+          setIsVisibleMasterData(!isVisibleMasterData)
+        }}
+        modalProps={{}}
+        isVisible={isVisibleMasterData}>
+        <View style={bottomSheetStyles.container}>
+          <View style={bottomSheetStyles.header}>
+            <Text style={{
+              fontFamily: MEDIUM,
+              color: GREY_COLOR
+            }}>Master Data</Text>
+            <TouchableOpacity onPress={() => { setIsVisibleMasterData(!isVisibleMasterData) }}>
+              <Image
+                style={{
+                  width: 18,
+                  height: 10,
+                }}
+                source={require('../../assets/icons/ic_close.png')}
+              />
+            </TouchableOpacity>
           </View>
-          <Text style={styles.dashboardContainerMenuItemsText}>Scan +</Text>
-        </TouchableOpacity>
+          <View
+            style={{
+              marginBottom: 16,
+              borderBottomColor: GREY_COLOR,
+              borderBottomWidth: StyleSheet.hairlineWidth,
+            }}
+          />
+          <TouchableOpacity style={bottomSheetStyles.content} onPress={goToVisitor}>
+            <View style={bottomSheetStyles.contentIconContainer}>
+              <Image
+                style={{
+                  width: 10,
+                  height: 10,
+                }}
+                source={require('../../assets/icons/ic_list.png')}
+              />
+            </View>
+            <Text style={bottomSheetStyles.contentText}>
+              Lihat List
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={bottomSheetStyles.content} onPress={() => {
+            setIsVisibleMasterData(!isVisibleMasterData)
+            setIsVisibleVisitor(!isVisibleVisitor)
+          }}>
+            <View style={bottomSheetStyles.contentIconContainer}>
+              <Image
+                style={{
+                  width: 16,
+                  height: 16,
+                }}
+                source={require('../../assets/icons/ic_add_user.png')}
+              />
+            </View>
+            <Text style={bottomSheetStyles.contentText}>
+              Tambah Data
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </BottomSheet>
+
+      {/* Visitor Bottom Sheet */}
+      <BottomSheet
+        onBackdropPress={() => {
+          setIsVisibleVisitor(!isVisibleVisitor)
+        }}
+        modalProps={{}}
+        isVisible={isVisibleVisitor}>
+        <View style={bottomSheetStyles.container}>
+          <View style={bottomSheetStyles.header}>
+            <Text style={{
+              fontFamily: MEDIUM,
+              color: GREY_COLOR
+            }}>Tambah Tamu</Text>
+            <TouchableOpacity onPress={() => {
+              setIsVisibleMasterData(!isVisibleMasterData)
+              setIsVisibleVisitor(!isVisibleVisitor)
+            }}>
+              <Image
+                style={{
+                  width: 18,
+                  height: 10,
+                }}
+                source={require('../../assets/icons/ic_close.png')}
+              />
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              marginBottom: 16,
+              borderBottomColor: GREY_COLOR,
+              borderBottomWidth: StyleSheet.hairlineWidth,
+            }}
+          />
+          <View style={formStyles.formInputContainer}>
+            <Text style={formStyles.formLabel}>
+              Nama tamu
+            </Text>
+            <TextInput
+              style={formStyles.formInput}
+            />
+            <Text style={formStyles.formLabel}>
+              Alamat
+            </Text>
+            <TextInput
+              style={formStyles.formInput}
+            />
+            <TouchableOpacity
+              style={formStyles.formButton}
+              onPress={() => {
+                setIsVisibleVisitor(false)
+                setIsVisibleMasterData(false)
+                setIsOpenDialogSuccess(!isOpenDialogSuccess)
+              }}
+            >
+              <Text style={formStyles.formButtonText}>
+                Simpan
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </BottomSheet>
+
+      <View style={styles.dashboardContainer}>
+        <View style={styles.dashboardContainerCountVisitor}>
+          <Text style={styles.dashboardContainerCountVisitorText}>
+            Tamu Hadir
+          </Text>
+          <Text style={styles.dashboardContainerCountVisitorNumber}>
+            100
+          </Text>
+        </View>
+        <View
+          style={{
+            marginVertical: 20,
+            borderBottomColor: GREY_1_COLOR,
+            borderBottomWidth: StyleSheet.hairlineWidth,
+          }}
+        />
+        <View style={styles.dashboardContainerMenus}>
+          <TouchableOpacity style={styles.dashboardContainerMenuContainerItems} onPress={() => { setIsVisibleMasterData(!isVisibleMasterData) }}>
+            <View
+              style={styles.dashboardContainerMenuItems}
+            >
+              <Image
+                style={{
+                  width: 25,
+                  height: 20
+                }}
+                source={require('../../assets/icons/ic_master.png')} />
+            </View>
+            <Text style={styles.dashboardContainerMenuItemsText}>Master Data</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.dashboardContainerMenuContainerItems} onPress={() => setIsVisibleVisitor(!isVisibleVisitor)}>
+            <View
+              style={styles.dashboardContainerMenuItems}
+            >
+              <Image
+                style={{
+                  width: 25,
+                  height: 20
+                }}
+                source={require('../../assets/icons/ic_manual.png')} />
+            </View>
+            <Text style={styles.dashboardContainerMenuItemsText}>Manual</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.dashboardContainerMenuContainerItems} onPress={goToScan}>
+            <View
+              style={styles.dashboardContainerMenuItems}
+            >
+              <Image
+                style={{
+                  width: 20,
+                  height: 20
+                }}
+                source={require('../../assets/icons/ic_scan.png')} />
+            </View>
+            <Text style={styles.dashboardContainerMenuItemsText}>Scan +</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </>
   )
 }
 
+
 const Menu: React.FC = () => {
+
+  const navigation = useNavigation()
+
+  const goToVisitor = () => {
+    navigation.navigate('Visitor' as never, {} as never)
+  }
+
   return (
     <>
       <View style={menuStyles.menuContainer}>
@@ -115,7 +317,7 @@ const Menu: React.FC = () => {
           <Image
             style={menuStyles.menuItemsImage}
             source={require('../../assets/illustrations/ill_daftar_tamu.png')} />
-          <TouchableOpacity>
+          <TouchableOpacity onPress={goToVisitor}>
             <View style={menuStyles.menuItemsContentContainer}>
               <View style={menuStyles.menuItemsTextContainer}>
                 <Text style={{
@@ -128,7 +330,7 @@ const Menu: React.FC = () => {
                 <Text style={{
                   fontFamily: REGULAR,
                   color: GREY_1_COLOR,
-                  fontSize: 8
+                  fontSize: 9
                 }}>
                   Lihat Daftar Tamu
                 </Text>
@@ -149,7 +351,7 @@ const Menu: React.FC = () => {
           <Image
             style={menuStyles.menuItemsImage}
             source={require('../../assets/illustrations/ill_undangan.png')} />
-          <TouchableOpacity>
+          <TouchableOpacity onPress={goToVisitor}>
             <View style={menuStyles.menuItemsContentContainer}>
               <View style={menuStyles.menuItemsTextContainer}>
                 <Text style={{
@@ -162,7 +364,7 @@ const Menu: React.FC = () => {
                 <Text style={{
                   fontFamily: REGULAR,
                   color: GREY_1_COLOR,
-                  fontSize: 8
+                  fontSize: 9
                 }}>
                   Lihat Undangan Saya
                 </Text>
@@ -199,7 +401,7 @@ const Menu: React.FC = () => {
           <Text style={{
             color: GREY_1_COLOR,
             fontFamily: REGULAR,
-            fontSize: 8,
+            fontSize: 9,
           }}>
             Lihat tutorial cara penggunaan aplikasi {"\n"}guestbook disini
           </Text>
@@ -220,50 +422,55 @@ const Menu: React.FC = () => {
   )
 }
 
-const ListVisitorCard : React.FC<{
-  name : string,
-  address : string
+const ListVisitorCard: React.FC<{
+  name: string,
+  address: string
 }> = ({
   name,
   address
 }) => {
-  return (
-    <View style={visitorStyles.container}>
-      <View 
-        style={{
-          height : 53,
-          width: 7,
-          borderRadius : 10,
-          backgroundColor : BLUE_COLOR,
-          marginRight : 11,
-        }}
-      />
-      <View>
-        <Text style={{
-          fontFamily : SEMI_BOLD,
-          fontSize : 18
-        }}>
-          {name}
-        </Text>
-        <Text style={{
-          fontFamily : REGULAR,
-          fontSize : 14
-        }}>
-          {address}
-        </Text>
+    return (
+      <View style={visitorStyles.container}>
+        <View
+          style={{
+            height: 53,
+            width: 7,
+            borderRadius: 10,
+            backgroundColor: BLUE_COLOR,
+            marginRight: 11,
+          }}
+        />
+        <View>
+          <Text style={{
+            fontFamily: SEMI_BOLD,
+            fontSize: 18
+          }}>
+            {name}
+          </Text>
+          <Text style={{
+            fontFamily: REGULAR,
+            fontSize: 14
+          }}>
+            {address}
+          </Text>
+        </View>
       </View>
-    </View>
-  )
-}
+    )
+  }
 
-const ListVisitor : React.FC = () => {
+const ListVisitor: React.FC = () => {
+  const navigation = useNavigation()
+
+  const goToVisitor = () => {
+    navigation.navigate('Visitor' as never, {} as never)
+  }
   return (
     <View style={listStyles.container}>
       <View style={listStyles.titleContainer}>
         <Text style={listStyles.titleText}>
           Tamu Hadir
         </Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={goToVisitor}>
           <Text style={listStyles.titleButton}>
             Lihat lebih banyak
           </Text>
@@ -271,9 +478,9 @@ const ListVisitor : React.FC = () => {
       </View>
 
       {
-        VISITOR.map((v, i) => (
+        VISITOR_.map((v, i) => (
           <ListVisitorCard
-            key={v.name} 
+            key={v.name}
             name={v.name}
             address={v.address}
           />
@@ -284,20 +491,25 @@ const ListVisitor : React.FC = () => {
 }
 
 const Home: React.FC = () => {
+  const navigation = useNavigation()
+
   const backAction = () => {
-    Alert.alert("Discard changes?", "Are you sure you want to exit?", [
+    if (!navigation.isFocused()) {
+      return false
+    }
+    Alert.alert("", "Apakah Anda yakin ingin keluar?", [
       {
-        text: "NO",
+        text: "Batal",
         onPress: () => null,
         style: "cancel"
       },
-      { text: "YES", onPress: () => BackHandler.exitApp() }
+      { text: "Keluar", onPress: () => BackHandler.exitApp() }
     ]);
     return true;
   };
 
   React.useEffect(() => {
-    // BackHandler.addEventListener("hardwareBackPress", backAction);
+    BackHandler.addEventListener("hardwareBackPress", backAction);
     return () => {
       BackHandler.removeEventListener("hardwareBackPress", backAction);
     }
@@ -308,7 +520,7 @@ const Home: React.FC = () => {
       <Header />
       <Dashboard />
       <Menu />
-      <ListVisitor /> 
+      <ListVisitor />
     </ScrollView>
   )
 }
@@ -366,11 +578,11 @@ const styles = StyleSheet.create({
   dashboardContainer: {
     position: 'absolute',
     top: 166,
-    width: 350,
-    height: 142,
+    width: windowWidth - 40,
+    height: 170,
     backgroundColor: WHITE_COLOR,
     borderRadius: 20,
-    marginHorizontal: (windowWidth - 350) / 2,
+    marginHorizontal: 20,
     paddingHorizontal: 28,
     paddingVertical: 16,
   },
@@ -400,14 +612,15 @@ const styles = StyleSheet.create({
     borderRadius: 46 / 2,
     backgroundColor: BLUE_COLOR,
     alignItems: 'center',
-    padding: 12
+    justifyContent: 'center'
   },
   dashboardContainerMenuIcons: {
-    // marginTop : 12
+    width: 20,
+    height: 20,
   },
   dashboardContainerMenuItemsText: {
     marginTop: 8,
-    fontFamily: REGULAR,
+    fontFamily: MEDIUM,
     fontSize: 11
   }
 })
@@ -416,13 +629,12 @@ const menuStyles = StyleSheet.create({
   menuContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 90,
-    marginHorizontal: (windowWidth - 350) / 2,
-
+    marginTop: 125,
+    marginHorizontal: 20,
   },
   menuItems: {
     flexDirection: 'column',
-    width: 170,
+    width: (windowWidth / 2) - 30,
     borderRadius: 20,
     padding: 12,
     backgroundColor: WHITE_COLOR,
@@ -458,9 +670,9 @@ const menuStyles = StyleSheet.create({
     paddingTop: 3
   },
   menuItemsBottomContainer: {
-    marginVertical: 11,
+    marginVertical: 16,
     backgroundColor: WHITE_COLOR,
-    marginHorizontal: (windowWidth - 350) / 2,
+    marginHorizontal: 20,
     borderRadius: 20,
     padding: 12,
     flexDirection: "row",
@@ -471,44 +683,125 @@ const menuStyles = StyleSheet.create({
     flexDirection: 'column',
   },
   menuItemsBottomButton: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
     backgroundColor: BLUE_COLOR,
     alignItems: 'center',
-    paddingTop: 3
+    justifyContent: 'center'
   },
 })
 
 const listStyles = StyleSheet.create({
-  container : {
-    marginHorizontal: (windowWidth - 350) / 2,
-    marginVertical : 11,
+  container: {
+    marginHorizontal: 20,
+    marginVertical: 11,
   },
   titleContainer: {
-    flexDirection : 'row',
-    justifyContent : 'space-between',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center'
   },
-  titleText : {
-    fontFamily : SEMI_BOLD,
+  titleText: {
+    fontFamily: SEMI_BOLD,
     fontSize: 14
   },
-  titleButton : {
-    fontFamily : REGULAR,
+  titleButton: {
+    fontFamily: REGULAR,
     fontSize: 10
   }
 })
 
-
 const visitorStyles = StyleSheet.create({
-  container : {
-    backgroundColor : "#fff",
-    borderRadius : 10,
-    padding : 11,
-    marginVertical : 11,
+  container: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 11,
+    marginVertical: 5,
     flexDirection: "row",
-    alignItems : 'center'
+    alignItems: 'center'
+  }
+})
+
+const bottomSheetStyles = StyleSheet.create({
+  container: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  content: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16
+  },
+  contentIconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: BLUE_COLOR,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  contentText: {
+    fontFamily: MEDIUM,
+    fontSize: 14,
+    marginLeft: 10,
+  }
+})
+
+const formStyles = StyleSheet.create({
+  formContainer: {
+    flex: 1,
+    justifyContent: "space-between",
+    backgroundColor: "#F5F5F5",
+    borderTopLeftRadius: 40,
+    borderTopRightRadius: 40,
+    paddingVertical: 50,
+  },
+  formHeader: {
+    alignItems: "center"
+  },
+  formInputContainer: {
+    paddingHorizontal: 10
+  },
+  formLabel: {
+    fontFamily: MEDIUM,
+    color: GREY_1_COLOR,
+    fontSize: 14,
+    marginBottom: 2
+  },
+  formInput: {
+    height: 40,
+    backgroundColor: "#EEEEEE",
+    padding: 10,
+    borderRadius: 15,
+    marginBottom: 24,
+  },
+  formButton: {
+    backgroundColor: BLUE_COLOR,
+    height: 40,
+    borderRadius: 15,
+    justifyContent: 'center'
+    // paddingVertical: 8
+  },
+  formButtonText: {
+    textAlign: "center",
+    fontSize: 14,
+    color: WHITE_COLOR,
+    fontFamily: SEMI_BOLD,
+  },
+  formHelpText: {
+    textAlign: 'center',
+    fontSize: 14,
+    fontFamily: REGULAR,
+    color: GREY_1_COLOR,
   }
 })
 export default Home

@@ -11,6 +11,7 @@ import Authentication from './src/screens/authentication';
 import Welcome from './src/screens/welcome';
 import Home from './src/screens/home';
 import Scanner from './src/screens/scan';
+import Visitor from './src/screens/visitor';
 
 const Stack = createNativeStackNavigator()
 
@@ -54,6 +55,14 @@ const App = () => {
           <Stack.Screen
             name="Scan"
             component={Scanner}
+            options={{
+              headerShown: false,
+            }}
+          />
+
+          <Stack.Screen
+            name="Visitor"
+            component={Visitor}
             options={{
               headerShown: false,
             }}
