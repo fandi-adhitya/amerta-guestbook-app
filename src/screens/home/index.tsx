@@ -10,7 +10,6 @@ import {
   TouchableOpacity,
   BackHandler,
   Alert,
-  ScreenRect,
   TextInput
 } from "react-native";
 import { BLUE_COLOR, GREY_1_COLOR, GREY_COLOR, PURPLE_COLOR, WHITE_COLOR, YELLOW_COLOR } from "../../constants/color";
@@ -19,8 +18,29 @@ import { VISITOR, VISITOR_ } from "../../constants/visitor_mocks";
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { BottomSheet, Button, Dialog, ListItem } from "@rneui/themed";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Header: React.FC = () => {
+
+  const [name, setName] = React.useState('')
+  
+  const getName = async () => {
+    try {
+      const data = await AsyncStorage.getItem("name")
+      
+      if(data){
+        setName(data)
+      }
+
+    } catch(e) {
+
+    }
+  } 
+
+  React.useEffect(() => {
+    getName()
+  }, [])
+  
   return (
     <View style={styles.header}>
       <View style={styles.headerBackgroundOverlay}>
@@ -37,10 +57,7 @@ const Header: React.FC = () => {
         </View>
         <View style={styles.headerClientText}>
           <Text style={styles.headerClientTextName}>
-            Agam & Dara
-          </Text>
-          <Text style={styles.headerClientTextDate}>
-            23 Juli 2023
+            {name}
           </Text>
         </View>
       </View>

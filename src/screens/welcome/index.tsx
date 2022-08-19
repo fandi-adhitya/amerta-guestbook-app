@@ -6,13 +6,19 @@ import {
   Text,
   Pressable,
   TouchableOpacity,
-  GestureResponderEvent
+  GestureResponderEvent,
+  ActivityIndicator
 } from "react-native";
 import { BLUE_COLOR, GREY_COLOR, WHITE_COLOR } from "../../constants/color";
 import AppIntroSlider from 'react-native-app-intro-slider';
 import IntroSlider from "../../components/IntroSlider";
 import { LIGHT, REGULAR } from "../../constants/fonts";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import apiInstance from "../../constants/api";
+import { CHECK } from "../../constants/urls";
+import { CheckType } from "../../typings/AuthType";
+import { Dialog } from "@rneui/themed";
 
 
 const Header: React.FC = () => {
@@ -28,12 +34,12 @@ const Header: React.FC = () => {
 }
 
 type FooterType = {
-  onPress : ((event: GestureResponderEvent) => void)
+  onPress: ((event: GestureResponderEvent) => void)
 }
 
 const Footer: React.FC<FooterType> = ({
   onPress
-} : FooterType ) => {
+}: FooterType) => {
   return (
     <View style={styles.footer}>
       <Text style={styles.footerText}>
@@ -55,24 +61,59 @@ const Welcome: React.FC = () => {
 
   const navigation = useNavigation()
 
+  const [isLoading, setIsLoading] = React.useState(true)
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false)
+
   const toAuthentication = () => {
     navigation.navigate('Authentication' as never, {} as never);
   }
 
+  const checkIsLoggedIn = async () => {
+    const token = await AsyncStorage.getItem("token");
+
+    if (!token) return false
+
+    try {
+      const { data } = await apiInstance.get<CheckType>(CHECK)
+      
+      if (data.isLoggedIn) {
+        navigation.navigate('Home' as never, {} as never);
+        setIsLoading(false)
+      }
+    } catch (e : any) {
+      setIsLoading(false)
+    }
+  }
+
+  React.useEffect(() => {
+
+    checkIsLoggedIn()
+
+  }, [])
+
   return (
     <>
+      <Dialog
+        overlayStyle={{
+          width : 90,
+          backgroundColor: '#EFF0F5',
+          borderRadius: 10,
+        }}
+        isVisible={isLoading}
+      >
+        <ActivityIndicator size={"large"} />
+      </Dialog>
+
       <View style={styles.container}>
 
         <View style={styles.content}>
           <Header />
         </View>
 
-        {/* <View> */}
         <IntroSlider />
-        {/* </View> */}
 
         <View style={styles.content}>
-          <Footer onPress={toAuthentication}/>
+          <Footer onPress={toAuthentication} />
         </View>
 
       </View>

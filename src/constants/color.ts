@@ -5,6 +5,7 @@ const WHITE_COLOR = "#FFF"
 const PURPLE_COLOR = "#7383C0"
 const YELLOW_COLOR = "#F9AE2B"
 const GREY_1_COLOR = "#818C9B"
+const RED_COLOR = "#e74c3c";
 
 export {
   BLUE_COLOR,
@@ -13,5 +14,6 @@ export {
   PURPLE_COLOR,
   YELLOW_COLOR,
   WHITE_COLOR,
-  GREY_1_COLOR
+  GREY_1_COLOR,
+  RED_COLOR
 }

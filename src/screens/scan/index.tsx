@@ -52,14 +52,6 @@ const Scanner: React.FC = () => {
     };
   }
 
-
-  React.useEffect(() => {
-    BackHandler.addEventListener("hardwareBackPress", backAction);
-    return () => {
-      BackHandler.removeEventListener("hardwareBackPress", backAction);
-    }
-  }, [])
-
   return (
     <QRCodeScanner
       showMarker

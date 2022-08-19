@@ -19,6 +19,7 @@ import com.horcrux.svg.SvgPackage;
 import com.swmansion.rnscreens.RNScreensPackage;
 import com.th3rdwave.safeareacontext.SafeAreaContextPackage;
 import org.reactnative.camera.RNCameraPackage;
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -42,7 +43,8 @@ public class MainApplication extends Application implements ReactApplication {
             new SvgPackage(),
             new RNScreensPackage(),
             new SafeAreaContextPackage(),
-            new RNCameraPackage()
+            new RNCameraPackage(),
+            new AsyncStoragePackage()
           );
         }
 

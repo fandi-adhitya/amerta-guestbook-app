@@ -6,12 +6,14 @@ import {
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SplashScreen from 'react-native-splash-screen';
+import Toast from 'react-native-toast-message';
 
 import Authentication from './src/screens/authentication';
 import Welcome from './src/screens/welcome';
 import Home from './src/screens/home';
 import Scanner from './src/screens/scan';
 import Visitor from './src/screens/visitor';
+
 
 const Stack = createNativeStackNavigator()
 
