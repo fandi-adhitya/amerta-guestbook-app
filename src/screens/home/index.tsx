@@ -10,37 +10,41 @@ import {
   TouchableOpacity,
   BackHandler,
   Alert,
-  TextInput
+  TextInput,
+  ActivityIndicator
 } from "react-native";
 import { BLUE_COLOR, GREY_1_COLOR, GREY_COLOR, PURPLE_COLOR, WHITE_COLOR, YELLOW_COLOR } from "../../constants/color";
 import { BOLD, MEDIUM, REGULAR, SEMI_BOLD } from "../../constants/fonts";
-import { VISITOR, VISITOR_ } from "../../constants/visitor_mocks";
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { BottomSheet, Button, Dialog, ListItem } from "@rneui/themed";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import useSWR from "swr";
+import { VisitorType } from "../../typings/VisitorType";
+import { VISITOR, VISITOR_CREATE } from "../../constants/urls";
+import Toast from "react-native-toast-message";
+import apiInstance from "../../constants/api";
 const Header: React.FC = () => {
 
   const [name, setName] = React.useState('')
-  
+
   const getName = async () => {
     try {
       const data = await AsyncStorage.getItem("name")
-      
-      if(data){
+
+      if (data) {
         setName(data)
       }
 
-    } catch(e) {
+    } catch (e) {
 
     }
-  } 
+  }
 
   React.useEffect(() => {
     getName()
   }, [])
-  
+
   return (
     <View style={styles.header}>
       <View style={styles.headerBackgroundOverlay}>
@@ -78,6 +82,56 @@ const Dashboard: React.FC = () => {
   const [isVisibleVisitor, setIsVisibleVisitor] = React.useState(false)
   const [isOpenDialogSuccess, setIsOpenDialogSuccess] = React.useState(false)
 
+  const [name, setName] = React.useState("")
+  const [address, setAddress] = React.useState("")
+
+  const [visitorName, setVisitorName] = React.useState("")
+  const [visitorAddress, setVisitorAddress] = React.useState("")
+
+  const [isSubmitting, setIsSubmitting] = React.useState(false)
+
+  const handleSubmit = async () => {
+
+    if(!name && !address) {
+      Toast.show({
+        type : "error",
+        text1 : "Nama & alamat tidak boleh kosong",
+        position : "top"
+      })
+
+      return false;
+    }
+    
+    setIsSubmitting(true)
+    
+    let values = {
+      "nama": name,
+      "alamat": address
+    }
+
+    try {
+      const { data } = await apiInstance.post<VisitorType>(VISITOR_CREATE, values)
+      
+      if( data ) {
+        setIsSubmitting(false)
+        setIsVisibleVisitor(false)
+        setIsVisibleMasterData(false)
+        setIsOpenDialogSuccess(true)
+      }
+
+    } catch (e : any) {
+      setIsSubmitting(false)
+      setIsVisibleVisitor(false)
+      setIsVisibleMasterData(false)
+
+      Toast.show({
+        type : "error",
+        text1 : e.data.message,
+        position : "top"
+      })
+    }
+  }
+
   const goToVisitor = () => {
     setIsVisibleMasterData(!isVisibleMasterData)
     navigation.navigate('Visitor' as never, {} as never)
@@ -85,6 +139,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <>
+      <Toast />
       <Dialog
         overlayStyle={{
           backgroundColor: '#EFF0F5',
@@ -118,10 +173,10 @@ const Dashboard: React.FC = () => {
         />
         <TouchableOpacity onPress={() => { setIsOpenDialogSuccess(!isOpenDialogSuccess) }}>
           <Text style={{
-            textAlign : 'center',
-            fontFamily : REGULAR,
-            fontSize : 12,
-            color : BLUE_COLOR,
+            textAlign: 'center',
+            fontFamily: REGULAR,
+            fontSize: 12,
+            color: BLUE_COLOR,
           }}>
             Tutup
           </Text>
@@ -192,7 +247,7 @@ const Dashboard: React.FC = () => {
         </View>
       </BottomSheet>
 
-      {/* Visitor Bottom Sheet */}
+      {/* Master Visitor Bottom Sheet */}
       <BottomSheet
         onBackdropPress={() => {
           setIsVisibleVisitor(!isVisibleVisitor)
@@ -230,21 +285,28 @@ const Dashboard: React.FC = () => {
               Nama tamu
             </Text>
             <TextInput
+              onChangeText={(e) => { setName(e) }}
               style={formStyles.formInput}
             />
             <Text style={formStyles.formLabel}>
               Alamat
             </Text>
             <TextInput
+              onChangeText={(e) => { setAddress(e) }}
               style={formStyles.formInput}
             />
+            {/* <TouchableOpacity
+                style={formStyles.formButton}
+                onPress={() => {
+                  setIsVisibleVisitor(false)
+                  setIsVisibleMasterData(false)
+                  setIsOpenDialogSuccess(!isOpenDialogSuccess)
+                }}
+              > */}
+
             <TouchableOpacity
               style={formStyles.formButton}
-              onPress={() => {
-                setIsVisibleVisitor(false)
-                setIsVisibleMasterData(false)
-                setIsOpenDialogSuccess(!isOpenDialogSuccess)
-              }}
+              onPress={handleSubmit}
             >
               <Text style={formStyles.formButtonText}>
                 Simpan
@@ -478,9 +540,21 @@ const ListVisitorCard: React.FC<{
 const ListVisitor: React.FC = () => {
   const navigation = useNavigation()
 
+  const queryParams = {
+    "type": 1,
+    "limit": 3
+  }
+
+  const { data, error } = useSWR<VisitorType>([VISITOR, queryParams])
+
   const goToVisitor = () => {
     navigation.navigate('Visitor' as never, {} as never)
   }
+
+  if (!data && !error) {
+    return <ActivityIndicator size={"large"} />
+  }
+
   return (
     <View style={listStyles.container}>
       <View style={listStyles.titleContainer}>
@@ -495,11 +569,11 @@ const ListVisitor: React.FC = () => {
       </View>
 
       {
-        VISITOR_.map((v, i) => (
+        data?.data.map((v, i) => (
           <ListVisitorCard
-            key={v.name}
-            name={v.name}
-            address={v.address}
+            key={i}
+            name={v.nama}
+            address={v.alamat}
           />
         ))
       }
@@ -569,6 +643,7 @@ const styles = StyleSheet.create({
   headerClient: {
     flexDirection: 'row',
     marginHorizontal: 26,
+    paddingRight: 10,
     marginVertical: 24,
     alignItems: 'center'
   },
@@ -585,7 +660,8 @@ const styles = StyleSheet.create({
     color: WHITE_COLOR,
     fontFamily: MEDIUM,
     fontSize: 18,
-    marginBottom: 8
+    marginBottom: 8,
+    marginRight: 10,
   },
   headerClientTextDate: {
     color: WHITE_COLOR,

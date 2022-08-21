@@ -71,7 +71,11 @@ const Welcome: React.FC = () => {
   const checkIsLoggedIn = async () => {
     const token = await AsyncStorage.getItem("token");
 
-    if (!token) return false
+    if (!token) {
+      setIsLoading(false)
+      
+      return false
+    }
 
     try {
       const { data } = await apiInstance.get<CheckType>(CHECK)

@@ -16,6 +16,7 @@ import { AUTH } from "../../constants/urls";
 import storage from "../../lib/storage";
 import { AuthType } from "../../typings/AuthType";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 type formType = {
   username: string,
@@ -30,7 +31,7 @@ const Form: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const handleSubmit = async () => {
-    setIsSubmitting(!isSubmitting)
+    setIsSubmitting(true)
 
     if(!username && !password){
       Toast.show({
@@ -40,6 +41,8 @@ const Form: React.FC = () => {
         position : "top"
       })
       
+      setIsSubmitting(false)
+
       return false;
     }
 
@@ -58,6 +61,7 @@ const Form: React.FC = () => {
 
       navigation.navigate("Home" as never, {} as never)
     } catch (e : any) {
+
       setIsSubmitting(false)
 
       Toast.show({

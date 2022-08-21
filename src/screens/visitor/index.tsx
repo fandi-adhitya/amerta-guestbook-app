@@ -1,12 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
 import { Tab, TabView } from "@rneui/themed";
 import React from "react";
-import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import useSWR from "swr";
 import Empty from "../../components/empty";
 import { BLUE_COLOR, WHITE_COLOR } from "../../constants/color";
 import { MEDIUM, REGULAR, SEMI_BOLD } from "../../constants/fonts";
-import { VISITOR } from "../../constants/visitor_mocks";
-
+import { VisitorType } from "../../typings/VisitorType";
+import { VISITOR } from "../../constants/urls";
 const windowWidth = Dimensions.get('window').width;
 
 const ListVisitorCard: React.FC<{
@@ -46,27 +47,32 @@ const ListVisitorCard: React.FC<{
   }
 
 
-const ListVisitor: React.FC = () => {
-  return (
-    <View style={listStyles.container}>
-     
-
-      {
-        VISITOR.map((v, i) => (
-          <ListVisitorCard
-            key={i}
-            name={v.name}
-            address={v.address}
-          />
-        ))
-      }
-    </View>
-  )
-}
+// const ListVisitor: React.FC = () => {
+//   return (
+//     <View style={listStyles.container}>
+//       {
+//         VISITOR.map((v, i) => (
+//           <ListVisitorCard
+//             key={i}
+//             name={v.name}
+//             address={v.address}
+//           />
+//         ))
+//       }
+//     </View>
+//   )
+// }
 
 const Visitor: React.FC = () => {
   const navigate = useNavigation()
   const [indexPage, setIndexPage] = React.useState(0)
+
+  let queryParams = {
+    "type": indexPage
+  }
+
+  const { data, error } = useSWR<VisitorType>([VISITOR, queryParams])
+
   return (
     <>
       <View style={headerStyles.container}>
@@ -149,15 +155,67 @@ const Visitor: React.FC = () => {
 
       <TabView value={indexPage} onChange={setIndexPage} animationType="spring" >
         <TabView.Item style={{ width: '100%' }}>
-          <ScrollView>
-            <ListVisitor/>
-          </ScrollView>
+          {!data && !error ? (
+            <ActivityIndicator />
+          ) : data?.data.length == 0 ? (
+            <Empty />
+          ) : (
+            <ScrollView>
+              <View style={listStyles.container}>
+                {
+                  data?.data.map((v, i) => (
+                    <ListVisitorCard
+                      key={i}
+                      name={v.nama}
+                      address={v.alamat}
+                    />
+                  ))
+                }
+              </View>
+            </ScrollView>
+          )}
         </TabView.Item>
-        <TabView.Item style={{width: '100%' }}>
-          <Empty />
+        <TabView.Item style={{ width: '100%' }}>
+        {!data && !error ? (
+            <ActivityIndicator />
+          ) : data?.data.length == 0 ? (
+            <Empty />
+          ) : (
+            <ScrollView>
+              <View style={listStyles.container}>
+                {
+                  data?.data.map((v, i) => (
+                    <ListVisitorCard
+                      key={i}
+                      name={v.nama}
+                      address={v.alamat}
+                    />
+                  ))
+                }
+              </View>
+            </ScrollView>
+          )}
         </TabView.Item>
-        <TabView.Item style={{width: '100%' }}>
-          <Empty />
+        <TabView.Item style={{ width: '100%' }}>
+        {!data && !error ? (
+            <ActivityIndicator />
+          ) : data?.data.length == 0 ? (
+            <Empty />
+          ) : (
+            <ScrollView>
+              <View style={listStyles.container}>
+                {
+                  data?.data.map((v, i) => (
+                    <ListVisitorCard
+                      key={i}
+                      name={v.nama}
+                      address={v.alamat}
+                    />
+                  ))
+                }
+              </View>
+            </ScrollView>
+          )}
         </TabView.Item>
       </TabView>
     </>
