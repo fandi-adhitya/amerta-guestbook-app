@@ -21,7 +21,7 @@ import { BottomSheet, Button, Dialog, ListItem } from "@rneui/themed";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useSWR from "swr";
 import { VisitorType } from "../../typings/VisitorType";
-import { VISITOR, VISITOR_CREATE } from "../../constants/urls";
+import { VISITOR, VISITOR_CREATE, VISITOR_MANUAL } from "../../constants/urls";
 import Toast from "react-native-toast-message";
 import apiInstance from "../../constants/api";
 const Header: React.FC = () => {
@@ -80,7 +80,9 @@ const Dashboard: React.FC = () => {
 
   const [isVisibleMasterData, setIsVisibleMasterData] = React.useState(false)
   const [isVisibleVisitor, setIsVisibleVisitor] = React.useState(false)
+  const [isVisibleManualVisitor, setIsVisibleManualVisitor] = React.useState(false)
   const [isOpenDialogSuccess, setIsOpenDialogSuccess] = React.useState(false)
+
 
   const [name, setName] = React.useState("")
   const [address, setAddress] = React.useState("")
@@ -89,7 +91,7 @@ const Dashboard: React.FC = () => {
   const [visitorAddress, setVisitorAddress] = React.useState("")
 
   const [isSubmitting, setIsSubmitting] = React.useState(false)
-
+  
   const handleSubmit = async () => {
 
     if(!name && !address) {
@@ -132,6 +134,46 @@ const Dashboard: React.FC = () => {
     }
   }
 
+
+  const handleManualSubmit = async () => {
+    if(!visitorName && !visitorAddress) {
+      Toast.show({
+        type : "error",
+        text1 : "Nama & alamat tidak boleh kosong",
+        position : "top"
+      })
+
+      return false;
+    }
+
+    setIsSubmitting(true)
+
+    let values = {
+      "nama" : visitorName,
+      "alamat" : visitorAddress
+    }
+
+    try{
+      const { data } = await apiInstance.post(VISITOR_MANUAL, values)
+
+      if( data ) {
+        setIsSubmitting(false)
+        setIsVisibleManualVisitor(false)
+        setIsOpenDialogSuccess(true)
+      }
+
+    } catch ( e: any ) {
+      setIsSubmitting(false)
+      setIsVisibleManualVisitor(false)
+
+      Toast.show({
+        type : "error",
+        text1 : e.data.message,
+        position : "top"
+      })
+    }
+  }
+  
   const goToVisitor = () => {
     setIsVisibleMasterData(!isVisibleMasterData)
     navigation.navigate('Visitor' as never, {} as never)
@@ -315,6 +357,68 @@ const Dashboard: React.FC = () => {
           </View>
         </View>
       </BottomSheet>
+      
+        {/* Manual Visitor Bottom Sheet */}
+       <BottomSheet
+        onBackdropPress={() => {
+          setIsVisibleManualVisitor(!isVisibleManualVisitor)
+        }}
+        modalProps={{}}
+        isVisible={isVisibleManualVisitor}>
+        <View style={bottomSheetStyles.container}>
+          <View style={bottomSheetStyles.header}>
+            <Text style={{
+              fontFamily: MEDIUM,
+              color: GREY_COLOR
+            }}>Input Manual</Text>
+            <TouchableOpacity disabled={isSubmitting} onPress={() => {
+              setIsVisibleManualVisitor(!isVisibleManualVisitor)
+            }}>
+              <Image
+                style={{
+                  width: 18,
+                  height: 10,
+                }}
+                source={require('../../assets/icons/ic_close.png')}
+              />
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              marginBottom: 16,
+              borderBottomColor: GREY_COLOR,
+              borderBottomWidth: StyleSheet.hairlineWidth,
+            }}
+          />
+          <View style={formStyles.formInputContainer}>
+            <Text style={formStyles.formLabel}>
+              Nama tamu
+            </Text>
+            <TextInput
+              editable={!isSubmitting}
+              onChangeText={(e) => { setVisitorName(e) }}
+              style={formStyles.formInput}
+            />
+            <Text style={formStyles.formLabel}>
+              Alamat
+            </Text>
+            <TextInput
+              editable={!isSubmitting}
+              onChangeText={(e) => { setVisitorAddress(e) }}
+              style={formStyles.formInput}
+            />
+
+            <TouchableOpacity
+              style={formStyles.formButton}
+              onPress={handleManualSubmit}
+            >
+              <Text style={formStyles.formButtonText}>
+                Simpan
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </BottomSheet>
 
       <View style={styles.dashboardContainer}>
         <View style={styles.dashboardContainerCountVisitor}>
@@ -347,7 +451,7 @@ const Dashboard: React.FC = () => {
             <Text style={styles.dashboardContainerMenuItemsText}>Master Data</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.dashboardContainerMenuContainerItems} onPress={() => setIsVisibleVisitor(!isVisibleVisitor)}>
+          <TouchableOpacity style={styles.dashboardContainerMenuContainerItems} onPress={() => setIsVisibleManualVisitor(!isVisibleManualVisitor) }>
             <View
               style={styles.dashboardContainerMenuItems}
             >
