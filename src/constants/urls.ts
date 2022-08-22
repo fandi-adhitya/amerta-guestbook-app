@@ -1,4 +1,4 @@
-const ROOT_URL = "http://10.171.16.109:8000"
+const ROOT_URL = "https://api.amertainvitation.my.id"
 const AUTH = ROOT_URL + "/auth"
 const CHECK = ROOT_URL + '/check'
 const VISITOR = ROOT_URL + '/visitor'

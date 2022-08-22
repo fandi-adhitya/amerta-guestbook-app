@@ -15,6 +15,7 @@ import Home from './src/screens/home';
 import Scanner from './src/screens/scan';
 import Visitor from './src/screens/visitor';
 import apiInstance from './src/constants/api';
+import { navigationRef } from './src/lib/root-navigation';
 
 
 const Stack = createNativeStackNavigator()
@@ -63,7 +64,7 @@ const App = () => {
         flex: 1,
         backgroundColor: '#FFF',
       }}>
-        <NavigationContainer>
+        <NavigationContainer ref={navigationRef}>
           <Stack.Navigator>
             <Stack.Screen
               name="Welcome"
