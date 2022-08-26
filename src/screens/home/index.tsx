@@ -24,9 +24,12 @@ import { VisitorType } from "../../typings/VisitorType";
 import { VISITOR, VISITOR_CREATE, VISITOR_MANUAL } from "../../constants/urls";
 import Toast from "react-native-toast-message";
 import apiInstance from "../../constants/api";
+
 const Header: React.FC = () => {
+  const navigate = useNavigation()
 
   const [name, setName] = React.useState('')
+
 
   const getName = async () => {
     try {
@@ -41,6 +44,11 @@ const Header: React.FC = () => {
     }
   }
 
+  const handleLogout = async () => {
+    await AsyncStorage.clear()
+    navigate.navigate("Authentication" as never, {} as never)
+  }
+
   React.useEffect(() => {
     getName()
   }, [])
@@ -51,7 +59,25 @@ const Header: React.FC = () => {
         <Image source={require('../../assets/additionals/overlay-white.png')} />
       </View>
       <View style={styles.headerTitle}>
+        <View style={{ width: 25 }}><Text></Text></View>
         <Text style={styles.headerTitleText}> the weeding of </Text>
+        <TouchableOpacity
+          onPress={handleLogout}
+          style={{
+            width: 30,
+            height: 30,
+            borderRadius: 15,
+            backgroundColor: WHITE_COLOR,
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}>
+          <Image
+            style={{
+              width: 15,
+              height: 15
+            }}
+            source={require('../../assets/icons/ic_power.png')} />
+        </TouchableOpacity>
       </View>
       <View style={styles.headerClient}>
         <View>
@@ -91,21 +117,21 @@ const Dashboard: React.FC = () => {
   const [visitorAddress, setVisitorAddress] = React.useState("")
 
   const [isSubmitting, setIsSubmitting] = React.useState(false)
-  
+
   const handleSubmit = async () => {
 
-    if(!name && !address) {
+    if (!name && !address) {
       Toast.show({
-        type : "error",
-        text1 : "Nama & alamat tidak boleh kosong",
-        position : "top"
+        type: "error",
+        text1: "Nama & alamat tidak boleh kosong",
+        position: "top"
       })
 
       return false;
     }
-    
+
     setIsSubmitting(true)
-    
+
     let values = {
       "nama": name,
       "alamat": address
@@ -113,34 +139,34 @@ const Dashboard: React.FC = () => {
 
     try {
       const { data } = await apiInstance.post<VisitorType>(VISITOR_CREATE, values)
-      
-      if( data ) {
+
+      if (data) {
         setIsSubmitting(false)
         setIsVisibleVisitor(false)
         setIsVisibleMasterData(false)
         setIsOpenDialogSuccess(true)
       }
 
-    } catch (e : any) {
+    } catch (e: any) {
       setIsSubmitting(false)
       setIsVisibleVisitor(false)
       setIsVisibleMasterData(false)
 
       Toast.show({
-        type : "error",
-        text1 : e.data.message,
-        position : "top"
+        type: "error",
+        text1: e.data.message,
+        position: "top"
       })
     }
   }
 
 
   const handleManualSubmit = async () => {
-    if(!visitorName && !visitorAddress) {
+    if (!visitorName && !visitorAddress) {
       Toast.show({
-        type : "error",
-        text1 : "Nama & alamat tidak boleh kosong",
-        position : "top"
+        type: "error",
+        text1: "Nama & alamat tidak boleh kosong",
+        position: "top"
       })
 
       return false;
@@ -149,31 +175,31 @@ const Dashboard: React.FC = () => {
     setIsSubmitting(true)
 
     let values = {
-      "nama" : visitorName,
-      "alamat" : visitorAddress
+      "nama": visitorName,
+      "alamat": visitorAddress
     }
 
-    try{
+    try {
       const { data } = await apiInstance.post(VISITOR_MANUAL, values)
 
-      if( data ) {
+      if (data) {
         setIsSubmitting(false)
         setIsVisibleManualVisitor(false)
         setIsOpenDialogSuccess(true)
       }
 
-    } catch ( e: any ) {
+    } catch (e: any) {
       setIsSubmitting(false)
       setIsVisibleManualVisitor(false)
 
       Toast.show({
-        type : "error",
-        text1 : e.data.message,
-        position : "top"
+        type: "error",
+        text1: e.data.message,
+        position: "top"
       })
     }
   }
-  
+
   const goToVisitor = () => {
     setIsVisibleMasterData(!isVisibleMasterData)
     navigation.navigate('Visitor' as never, {} as never)
@@ -357,9 +383,9 @@ const Dashboard: React.FC = () => {
           </View>
         </View>
       </BottomSheet>
-      
-        {/* Manual Visitor Bottom Sheet */}
-       <BottomSheet
+
+      {/* Manual Visitor Bottom Sheet */}
+      <BottomSheet
         onBackdropPress={() => {
           setIsVisibleManualVisitor(!isVisibleManualVisitor)
         }}
@@ -451,7 +477,7 @@ const Dashboard: React.FC = () => {
             <Text style={styles.dashboardContainerMenuItemsText}>Master Data</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.dashboardContainerMenuContainerItems} onPress={() => setIsVisibleManualVisitor(!isVisibleManualVisitor) }>
+          <TouchableOpacity style={styles.dashboardContainerMenuContainerItems} onPress={() => setIsVisibleManualVisitor(!isVisibleManualVisitor)}>
             <View
               style={styles.dashboardContainerMenuItems}
             >
@@ -735,6 +761,9 @@ const styles = StyleSheet.create({
     top: 0
   },
   headerTitle: {
+    marginHorizontal: 26,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 35
   },
@@ -758,14 +787,15 @@ const styles = StyleSheet.create({
   },
   headerClientText: {
     flexDirection: 'column',
-    marginHorizontal: 21
+    marginHorizontal: 21,
+    paddingRight: 20
   },
   headerClientTextName: {
     color: WHITE_COLOR,
     fontFamily: MEDIUM,
     fontSize: 18,
     marginBottom: 8,
-    marginRight: 10,
+    // marginRight: 10,
   },
   headerClientTextDate: {
     color: WHITE_COLOR,

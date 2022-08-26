@@ -4,6 +4,7 @@ const CHECK = ROOT_URL + '/check'
 const VISITOR = ROOT_URL + '/visitor'
 const VISITOR_CREATE = VISITOR + '/create'
 const VISITOR_MANUAL = VISITOR + '/manual'
+const VISITOR_SCAN = (id : any) => VISITOR + '/scan' + `/${id}`
 
 export {
   ROOT_URL,
@@ -11,5 +12,6 @@ export {
   CHECK,
   VISITOR,
   VISITOR_CREATE,
-  VISITOR_MANUAL
+  VISITOR_MANUAL,
+  VISITOR_SCAN
 }

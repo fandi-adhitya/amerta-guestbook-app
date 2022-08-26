@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { Tab, TabView } from "@rneui/themed";
 import React from "react";
-import { ActivityIndicator, Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, BackHandler, Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import useSWR from "swr";
 import Empty from "../../components/empty";
 import { BLUE_COLOR, WHITE_COLOR } from "../../constants/color";
@@ -46,23 +46,7 @@ const ListVisitorCard: React.FC<{
     )
   }
 
-
-// const ListVisitor: React.FC = () => {
-//   return (
-//     <View style={listStyles.container}>
-//       {
-//         VISITOR.map((v, i) => (
-//           <ListVisitorCard
-//             key={i}
-//             name={v.name}
-//             address={v.address}
-//           />
-//         ))
-//       }
-//     </View>
-//   )
-// }
-
+  
 const Visitor: React.FC = () => {
   const navigate = useNavigation()
   const [indexPage, setIndexPage] = React.useState(0)
@@ -73,6 +57,26 @@ const Visitor: React.FC = () => {
 
   const { data, error } = useSWR<VisitorType>([VISITOR, queryParams])
 
+  const goToHome = () => {
+    navigate.navigate("Home" as never, {} as never)
+  }
+
+  const backAction = () => {
+    if (!navigate.isFocused()) {
+      return false
+    }
+
+    navigate.navigate("Home" as never, {} as never)
+    return true;
+  };
+
+  React.useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", backAction);
+    return () => {
+      BackHandler.removeEventListener("hardwareBackPress", backAction);
+    }
+  }, []);
+
   return (
     <>
       <View style={headerStyles.container}>
@@ -81,7 +85,7 @@ const Visitor: React.FC = () => {
         </View>
         <View style={headerStyles.titleContainer}>
           <TouchableOpacity
-            onPress={() => navigate.goBack()}
+            onPress={goToHome}
             style={headerStyles.backButton}>
             <Image
               style={{
@@ -156,7 +160,9 @@ const Visitor: React.FC = () => {
       <TabView value={indexPage} onChange={setIndexPage} animationType="spring" >
         <TabView.Item style={{ width: '100%' }}>
           {!data && !error ? (
-            <ActivityIndicator />
+            <View style={{ marginTop: 80 }}>
+              <ActivityIndicator size={"large"} />
+            </View>
           ) : data?.data.length == 0 ? (
             <Empty />
           ) : (
@@ -176,11 +182,12 @@ const Visitor: React.FC = () => {
           )}
         </TabView.Item>
         <TabView.Item style={{ width: '100%' }}>
-        {!data && !error ? (
-            <ActivityIndicator />
-          ) : data?.data.length == 0 ? (
-            <Empty />
-          ) : (
+          {!data && !error ? (
+            <View style={{ marginTop: 80 }}>
+              <ActivityIndicator size={"large"} />
+            </View>) : data?.data.length == 0 ? (
+              <Empty />
+            ) : (
             <ScrollView>
               <View style={listStyles.container}>
                 {
@@ -197,11 +204,12 @@ const Visitor: React.FC = () => {
           )}
         </TabView.Item>
         <TabView.Item style={{ width: '100%' }}>
-        {!data && !error ? (
-            <ActivityIndicator />
-          ) : data?.data.length == 0 ? (
-            <Empty />
-          ) : (
+          {!data && !error ? (
+            <View style={{ marginTop: 80 }}>
+              <ActivityIndicator size={"large"} />
+            </View>) : data?.data.length == 0 ? (
+              <Empty />
+            ) : (
             <ScrollView>
               <View style={listStyles.container}>
                 {

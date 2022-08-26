@@ -6,6 +6,8 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  BackHandler,
+  ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Toast from 'react-native-toast-message';
@@ -17,6 +19,7 @@ import storage from "../../lib/storage";
 import { AuthType } from "../../typings/AuthType";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { Dialog } from "@rneui/themed";
 
 type formType = {
   username: string,
@@ -33,132 +36,161 @@ const Form: React.FC = () => {
   const handleSubmit = async () => {
     setIsSubmitting(true)
 
-    if(!username && !password){
+    if (!username && !password) {
       Toast.show({
-        type : "error",
-        text1 : "Gagal Masuk ke-Aplikasi",
-        text2 : "Username & password tidak boleh kosong",
-        position : "top"
+        type: "error",
+        text1: "Gagal Masuk ke-Aplikasi",
+        text2: "Username & password tidak boleh kosong",
+        position: "top"
       })
-      
+
       setIsSubmitting(false)
 
       return false;
     }
 
-    let values : formType = {
-      username : username,
-      password : password
+    let values: formType = {
+      username: username,
+      password: password
     }
 
     try {
       const { data } = await apiInstance.post<AuthType>(AUTH, values)
-      
-      setIsSubmitting(false)
 
-      AsyncStorage.setItem("name", data.namamempelai)
-      AsyncStorage.setItem("token", data.token)
+      if (data) {
+        setIsSubmitting(false)
 
-      navigation.navigate("Home" as never, {} as never)
-    } catch (e : any) {
+        AsyncStorage.setItem("name", data.namamempelai)
+        AsyncStorage.setItem("token", data.token)
+        AsyncStorage.setItem("link", data.link)
+
+        navigation.navigate("Home" as never, {} as never)
+      }
+
+    } catch (e: any) {
 
       setIsSubmitting(false)
 
       Toast.show({
-        type : "error",
-        text1 : e.data.message,
-        position : "top"
+        type: "error",
+        text1: e.data.message,
+        position: "top"
       })
-    } 
+    }
 
   }
 
   return (
     <>
-    <Toast />
-    <View style={styles.formContainer}>
-      <View style={styles.formHeader}>
-        <Text style={{
-          fontSize: 18
-        }}>
+      <Toast />
+      <Dialog
+        overlayStyle={{
+          width: 90,
+          backgroundColor: '#EFF0F5',
+          borderRadius: 10,
+        }}
+        isVisible={isSubmitting}
+      >
+        <ActivityIndicator size={"large"} />
+      </Dialog>
+      <View style={styles.formContainer}>
+        <View style={styles.formHeader}>
           <Text style={{
-            fontFamily: SEMI_BOLD,
-            color: BLUE_COLOR
+            fontSize: 18
           }}>
-            Masuk
+            <Text style={{
+              fontFamily: SEMI_BOLD,
+              color: BLUE_COLOR
+            }}>
+              Masuk
+            </Text>
+            <Text style={{
+              fontFamily: SEMI_BOLD,
+              color: GREY_1_COLOR,
+            }}>
+              {" "}ke Buku Tamu
+            </Text>
           </Text>
-          <Text style={{
-            fontFamily: SEMI_BOLD,
-            color: GREY_1_COLOR,
-          }}>
-            {" "}ke Buku Tamu
-          </Text>
-        </Text>
-      </View>
-
-      <View style={styles.formInputContainer}>
-
-        <View style={styles.textInputContainer}>
-          <Text style={styles.formLabel}>
-            Username
-          </Text>
-          <TextInput
-            editable={!isSubmitting} 
-            value={username}
-            onChangeText={(e) => setUsername(e)}
-            style={styles.formInput}
-          />
         </View>
 
-        <View style={styles.textInputContainer}>
-          <Text style={styles.formLabel}>
-            Password
-          </Text>
-          <TextInput
-            editable={!isSubmitting}
-            value={password}
-            onChangeText={(e) => setPassword(e)}
-            secureTextEntry
-            style={styles.formInput}
-          />
+        <View style={styles.formInputContainer}>
+
+          <View style={styles.textInputContainer}>
+            <Text style={styles.formLabel}>
+              Username
+            </Text>
+            <TextInput
+              editable={!isSubmitting}
+              value={username}
+              onChangeText={(e) => setUsername(e)}
+              style={styles.formInput}
+            />
+          </View>
+
+          <View style={styles.textInputContainer}>
+            <Text style={styles.formLabel}>
+              Password
+            </Text>
+            <TextInput
+              editable={!isSubmitting}
+              value={password}
+              onChangeText={(e) => setPassword(e)}
+              secureTextEntry
+              style={styles.formInput}
+            />
+          </View>
+
+          <TouchableOpacity
+            style={[styles.formButton, { backgroundColor: BLUE_COLOR }]}
+            onPress={handleSubmit}
+          >
+            <Text style={styles.formButtonText}>
+              Masuk
+            </Text>
+          </TouchableOpacity>
         </View>
 
-        <TouchableOpacity
-          style={[styles.formButton, { backgroundColor: BLUE_COLOR }]}
-          onPress={handleSubmit}
-        >
-          <Text style={styles.formButtonText}>
-            Masuk
+
+        <View>
+          <Text style={styles.formHelpText}>
+            Punya masalah saat login ? {"\n"}
+            Hubungi Admin
           </Text>
-        </TouchableOpacity>
-      </View>
+        </View>
 
-
-      <View>
-        <Text style={styles.formHelpText}>
-          Punya masalah saat login ? {"\n"}
-          Hubungi Admin
-        </Text>
+        <View>
+          <Text style={{
+            textAlign: "center",
+            fontSize: 14,
+            fontFamily: REGULAR,
+            color: BLUE_COLOR,
+          }}>
+            By Amerta Invitation
+          </Text>
+        </View>
       </View>
-
-      <View>
-        <Text style={{
-          textAlign: "center",
-          fontSize: 14,
-          fontFamily: REGULAR,
-          color: BLUE_COLOR,
-        }}>
-          By Amerta Invitation
-        </Text>
-      </View>
-    </View>
     </>
   )
 }
 
 const Authentication: React.FC = () => {
-  return (
+  const navigation = useNavigation()
 
+  const backAction = () => {
+    if (!navigation.isFocused()) {
+      return false
+    }
+    BackHandler.exitApp();
+    return true;
+  };
+
+  React.useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", backAction);
+    return () => {
+      BackHandler.removeEventListener("hardwareBackPress", backAction);
+    }
+  }, []);
+  return (
     <View style={styles.container}>
       <View style={{
         backgroundColor: "#fff"

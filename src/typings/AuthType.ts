@@ -1,6 +1,7 @@
 type AuthType = {
-  namamempelai : string,
+  namamempelai : string
   token: string
+  link : string
 }
 
 type CheckType = {
