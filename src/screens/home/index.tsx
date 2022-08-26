@@ -11,7 +11,8 @@ import {
   BackHandler,
   Alert,
   TextInput,
-  ActivityIndicator
+  ActivityIndicator,
+  Linking
 } from "react-native";
 import { BLUE_COLOR, GREY_1_COLOR, GREY_COLOR, PURPLE_COLOR, WHITE_COLOR, YELLOW_COLOR } from "../../constants/color";
 import { BOLD, MEDIUM, REGULAR, SEMI_BOLD } from "../../constants/fonts";
@@ -21,7 +22,7 @@ import { BottomSheet, Button, Dialog, ListItem } from "@rneui/themed";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useSWR from "swr";
 import { VisitorType } from "../../typings/VisitorType";
-import { VISITOR, VISITOR_CREATE, VISITOR_MANUAL } from "../../constants/urls";
+import { ROOT_URL, VISITOR, VISITOR_CREATE, VISITOR_MANUAL } from "../../constants/urls";
 import Toast from "react-native-toast-message";
 import apiInstance from "../../constants/api";
 
@@ -519,6 +520,14 @@ const Menu: React.FC = () => {
     navigation.navigate('Visitor' as never, {} as never)
   }
 
+  const goToWebClient = async () => {
+    const dest = await AsyncStorage.getItem("link")
+
+    const url = 'https://amertainvitation.my.id/' + dest
+
+    await Linking.openURL(url)
+  }
+
   return (
     <>
       <View style={menuStyles.menuContainer}>
@@ -560,7 +569,7 @@ const Menu: React.FC = () => {
           <Image
             style={menuStyles.menuItemsImage}
             source={require('../../assets/illustrations/ill_undangan.png')} />
-          <TouchableOpacity onPress={goToVisitor}>
+          <TouchableOpacity onPress={goToWebClient}>
             <View style={menuStyles.menuItemsContentContainer}>
               <View style={menuStyles.menuItemsTextContainer}>
                 <Text style={{
